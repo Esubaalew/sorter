@@ -87,8 +87,4 @@ updater.dispatcher.add_handler(CommandHandler('help', help))
 updater.dispatcher.add_handler(CommandHandler('how', how))
 updater.dispatcher.add_handler(CommandHandler('about', about))
 dispatcher.add_handler(MessageHandler(Filters.text, getSorted))
-updater.start_webhook(listen="0.0.0.0",
-                      port=int(os.environ.get('PORT', 5000)),
-                      url_path='5646540816:AAGh2djjpa7g_WHkkl3kG0-4wrjHPJEJPzw',
-                      webhook_url=  + '5646540816:AAGh2djjpa7g_WHkkl3kG0-4wrjHPJEJPzw'
-                      )
+updater.start_polling()
