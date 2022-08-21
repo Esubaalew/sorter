@@ -1,0 +1,10 @@
+bottle==0.12.23
+Flask==2.2.2
+Kivy==2.1.0
+nltk==3.7
+notebook==6.4.12
+numpy==1.23.1
+pandas==1.4.3
+pyTelegramBotAPI==4.7.0
+python-telegram-bot==13.13
+teleport==0.4.0
