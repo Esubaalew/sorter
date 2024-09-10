@@ -107,7 +107,7 @@ def do_about():
     """
     return render_template_string(html_content)
 
-@app.route('/about', methods=['GET'])
+@app.route('/', methods=['GET'])
 def do_about():
     html_content = """
     <!DOCTYPE html>
