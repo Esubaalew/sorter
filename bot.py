@@ -82,6 +82,9 @@ def set_webhook():
     webhook_url = f"https://sorteer-i0qdavrp.b4a.run/{TOKEN}"
     bot.set_webhook(webhook_url)
     return f"Webhook set to {webhook_url}"
+@app.route('/about', methods=['GET'])
+def do_about()
+return 'Esubalew Chekol'
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000)
