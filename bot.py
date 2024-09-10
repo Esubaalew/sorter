@@ -79,7 +79,7 @@ def webhook():
 # Set webhook
 @app.route('/set_webhook', methods=['GET', 'POST'])
 def set_webhook():
-    webhook_url = f"https://your_domain.com/{TOKEN}"
+    webhook_url = f"https://sorteer-i0qdavrp.b4a.run/{TOKEN}"
     bot.set_webhook(webhook_url)
     return f"Webhook set to {webhook_url}"
 
