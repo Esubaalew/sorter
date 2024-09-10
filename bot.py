@@ -1,90 +1,87 @@
-
-from typing import final
-import telegram
-from telegram.ext import Updater, MessageHandler, Filters
-from telegram.ext import CommandHandler
-from telegram.update import Update
-from telegram.ext.callbackcontext import CallbackContext
+from flask import Flask, request
+from telegram import Update, Bot
+from telegram.ext import Dispatcher, CommandHandler, MessageHandler, Filters
 from text import get_info
 from nltk import word_tokenize
 import os
-telegram_bot_token =\
-updater = Updater(token='5646540816:AAGh2djjpa7g_WHkkl3kG0-4wrjHPJEJPzw', use_context=True)
-dispatcher = updater.dispatcher
 
+# Initialize Flask app
+app = Flask(__name__)
 
+# Initialize the Telegram Bot
+TOKEN = '5646540816:AAGh2djjpa7g_WHkkl3kG0-4wrjHPJEJPzw'
+bot = Bot(token=TOKEN)
 
-# set up the introductory statement for the bot when the /start command is invoked
-def start(update, context):
+# Initialize dispatcher
+dispatcher = Dispatcher(bot, None, workers=0, use_context=True)
+
+# Define command handlers
+def start(update: Update, context):
     chat_id = update.effective_chat.id
     context.bot.send_message(chat_id=chat_id, text='''
-    
-Hello there!!
-Provide any  English text(contents of text must be all lowercase OR ALL UPPERCASE) and I will give you the sorted list of words in it.
-    enter /help for all commands list
-    enter /how to learn how to use the bot 
-    '''
-                                                   )
+    Hello there!!
+    Provide any English text (contents of text must be all lowercase OR ALL UPPERCASE) and I will give you the sorted list of words in it.
+    Enter /help for all commands list
+    Enter /how to learn how to use the bot
+    ''')
 
-def help(update: Update, context: CallbackContext):
+def help(update: Update, context):
     update.message.reply_text("""USE THE FOLLOWING COMMANDS :-
 /start - About me[bot]
 /how - how to use bot
 /help - for all commands list
 /about - to know about my designer
-    
-	""")
-def about(update: Update, context: CallbackContext):
+    """)
+
+def about(update: Update, context):
     update.message.reply_text("""
 My name is Esubalew Chekol.
-I am not a developer/coder/programmer i am still learning to code.
-I thank my groupmates, East(A), Ros(H), lead(L)  and bek(B)] of  my IS dept.
-Dear A,H,L and B I really love you all.
+I am not a developer/coder/programmer I am still learning to code.
+I thank my groupmates, East(A), Ros(H), lead(L), and Bek(B) of my IS dept.
+Dear A, H, L, and B, I really love you all.
+    በጣም እወዳችኋለሁ!!
+    ___________ከ እሱባለው ቸኮል | from Esubalew_____________________
+    """)
 
-በጣም እወዳችኋለሁ!!
-___________ከ እሱባለው ቸኮል | from Esubalew_____________________
-
-
-
-
-   
-
-
-    
-	""")
-def how(update: Update, context: CallbackContext):
+def how(update: Update, context):
     update.message.reply_text("""
-
 The purpose of this bot is to handle any text document and send the sorted list back to the user.\n
-To use the bot, just send any text and it will automaticaly send the sorted list of words and numbers[if any].\n
+To use the bot, just send any text and it will automatically send the sorted list of words and numbers [if any].\n
 If there are any special characters in your text, this bot will filter them out and these characters will not be included in the list.\n 
-If there are number in the list, these numbers will be considered as any other word.
-
+If there are numbers in the list, these numbers will be considered as any other word.
 NOTE THAT THE INPUT TEXT MUST BE WRITTEN IN ALL LOWERCASE OR ALL UPPERCASE!!
-
 ___________ከ እሱባለው ቸኮል | from Esubalew_____________________
+    """)
 
-	""")
-# obtain the information of the word provided and format before presenting.
-def getSorted(update, context):
-    # get the word info
+def getSorted(update: Update, context):
+    # Get the word info
     fulltext = get_info(update.message.text)
-    words=word_tokenize(fulltext)
+    words = word_tokenize(fulltext)
     words.sort()
-
+    sorted_words = [word.lower() for word in words if word.isalnum()]
     
-    update.message.reply_text(
+    update.message.reply_text(sorted_words)
 
-
-       [
-            word.lower() for word in words if word.isalnum()]
-
-
-        )
-
+# Add handlers to dispatcher
 dispatcher.add_handler(CommandHandler("start", start))
-updater.dispatcher.add_handler(CommandHandler('help', help))
-updater.dispatcher.add_handler(CommandHandler('how', how))
-updater.dispatcher.add_handler(CommandHandler('about', about))
+dispatcher.add_handler(CommandHandler('help', help))
+dispatcher.add_handler(CommandHandler('how', how))
+dispatcher.add_handler(CommandHandler('about', about))
 dispatcher.add_handler(MessageHandler(Filters.text, getSorted))
-updater.start_polling()
+
+# Define webhook route
+@app.route(f'/{TOKEN}', methods=['POST'])
+def webhook():
+    update = Update.de_json(request.get_json(), bot)
+    dispatcher.process_update(update)
+    return "ok"
+
+# Set webhook
+@app.route('/set_webhook', methods=['GET', 'POST'])
+def set_webhook():
+    webhook_url = f"https://your_domain.com/{TOKEN}"
+    bot.set_webhook(webhook_url)
+    return f"Webhook set to {webhook_url}"
+
+if __name__ == '__main__':
+    app.run(port=5000)
