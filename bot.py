@@ -107,5 +107,28 @@ def do_about():
     """
     return render_template_string(html_content)
 
+@app.route('/about', methods=['GET'])
+def do_about():
+    html_content = """
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>About Esubalew</title>
+    </head>
+    <body>
+        <h1>About Me</h1>
+        <p>My name is Esubalew Chekol.</p>
+        <p>I am not a developer/coder/programmer; I am still learning to code.</p>
+        <p>I thank my groupmates, East(A), Ros(H), lead(L), and Bek(B) of my IS department.</p>
+        <p>Dear A, H, L, and B, I really love you all.</p>
+        <p>በጣም እወዳችኋለሁ!!</p>
+        <p>___________ከ እሱባለው ቸኮል | from Esubalew_____________________</p>
+    </body>
+    </html>
+    """
+    return render_template_string(html_content)
+
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000)
